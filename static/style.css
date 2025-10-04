@@ -1,0 +1,61 @@
+/* static/style.css */
+body {
+  font-family: Arial, sans-serif;
+  max-width: 980px;
+  margin: 18px auto;
+  padding: 0 16px;
+  color: #222;
+  background: #f7f8fb;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+nav a {
+  margin-right: 10px;
+  text-decoration: none;
+  color: #0366d6;
+}
+
+main {
+  background: #fff;
+  padding: 18px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(20,20,20,0.06);
+}
+
+form input, form select, form button {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+button {
+  cursor: pointer;
+  background: #0366d6;
+  color: white;
+  border: none;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
