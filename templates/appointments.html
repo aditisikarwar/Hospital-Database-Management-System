@@ -1,0 +1,64 @@
+<!-- templates/appointments.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Appointments - Sanjeevini</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Appointments</h1>
+    <nav><a href="/">Home</a> | <a href="/patients">Patients</a></nav>
+  </header>
+  <main>
+    <section>
+      <h2>New Appointment</h2>
+      <form id="appt-form">
+        <input name="patient_id" placeholder="Patient ID" required>
+        <input name="doctor_id" placeholder="Doctor ID" required>
+        <input name="appt_datetime" type="datetime-local" required>
+        <input name="reason" placeholder="Reason">
+        <button type="submit">Create</button>
+      </form>
+    </section>
+    <section>
+      <h2>All Appointments</h2>
+      <ul id="appointments-list"></ul>
+    </section>
+  </main>
+
+  <script>
+    async function fetchAppointments(){
+      const res = await fetch('/api/appointments');
+      const data = await res.json();
+      const list = document.getElementById('appointments-list');
+      list.innerHTML = '';
+      data.forEach(a=>{
+        const li = document.createElement('li');
+        li.textContent = `${a.id} — ${a.appt_datetime} — ${a.patient.name} with ${a.doctor.name} — ${a.status}`;
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('appt-form').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const obj = Object.fromEntries(fd.entries());
+      if(obj.appt_datetime) obj.appt_datetime = new Date(obj.appt_datetime).toISOString();
+      const res = await fetch('/api/appointments', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(obj)
+      });
+      if(res.ok){ alert('Created'); fetchAppointments(); e.target.reset(); }
+      else {
+        const err = await res.json();
+        alert('Error: ' + (err.error || 'Failed to create appointment'));
+      }
+    });
+
+    fetchAppointments();
+  </script>
+</body>
+</html>
