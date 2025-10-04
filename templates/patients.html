@@ -1,0 +1,75 @@
+<!-- templates/patients.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Patients - Sanjeevini</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Patients</h1>
+    <nav><a href="/">Home</a> | <a href="/appointments">Appointments</a></nav>
+  </header>
+  <main>
+    <section>
+      <h2>Create Patient</h2>
+      <form id="patient-form">
+        <input name="name" placeholder="Full name" required>
+        <input name="dob" type="date" placeholder="DOB">
+        <select name="gender">
+          <option value="Female">Female</option>
+          <option value="Male">Male</option>
+          <option value="Other">Other</option>
+        </select>
+        <input name="phone" placeholder="Phone">
+        <input name="email" placeholder="Email">
+        <input name="address" placeholder="Address">
+        <button type="submit">Create</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>All Patients</h2>
+      <input id="search-name" placeholder="Search by name">
+      <button id="btn-search">Search</button>
+      <ul id="patients-list"></ul>
+    </section>
+  </main>
+
+  <script>
+    async function fetchPatients(q='') {
+      const url = '/api/patients' + (q ? ('?name=' + encodeURIComponent(q)) : '');
+      const res = await fetch(url);
+      const data = await res.json();
+      const list = document.getElementById('patients-list');
+      list.innerHTML = '';
+      data.forEach(p=>{
+        const li = document.createElement('li');
+        li.textContent = `${p.id} — ${p.name} (${p.phone || ''})`;
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('patient-form').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const obj = Object.fromEntries(fd.entries());
+      if(obj.dob === '') delete obj.dob;
+      const res = await fetch('/api/patients', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(obj)
+      });
+      if(res.ok){ alert('Created'); fetchPatients(); e.target.reset(); }
+      else {
+        const err = await res.json();
+        alert('Error: ' + (err.error || 'Failed to create'));
+      }
+    });
+
+    document.getElementById('btn-search').addEventListener('click', ()=>fetchPatients(document.getElementById('search-name').value));
+    fetchPatients();
+  </script>
+</body>
+</html>
